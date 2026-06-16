@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche de révision Docker</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 10.5px; line-height: 1.45; color: #1a202c; margin: 0;
+  }
+  h1 {
+    font-size: 26px; color: #0db7ed; margin: 0 0 2px; letter-spacing: -0.5px;
+  }
+  .subtitle { color: #718096; font-size: 11px; margin: 0 0 14px; }
+  h2 {
+    font-size: 14px; color: #fff; background: #0db7ed; padding: 5px 10px;
+    border-radius: 4px; margin: 16px 0 8px; break-after: avoid;
+  }
+  h3 {
+    font-size: 11.5px; color: #2b6cb0; margin: 10px 0 4px;
+    border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; break-after: avoid;
+  }
+  p { margin: 4px 0; }
+  code {
+    background: #edf2f7; color: #c53030; padding: 1px 5px; border-radius: 3px;
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace; font-size: 9.5px;
+  }
+  .cmd {
+    background: #1a202c; color: #e2e8f0; padding: 8px 10px; border-radius: 5px;
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace; font-size: 9px;
+    margin: 4px 0; white-space: pre-wrap; line-height: 1.6;
+  }
+  .cmd .c { color: #68d391; }       /* commande */
+  .cmd .cm { color: #718096; }      /* commentaire */
+  table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 9.5px; }
+  th { background: #2d3748; color: #fff; text-align: left; padding: 5px 8px; }
+  td { border-bottom: 1px solid #e2e8f0; padding: 4px 8px; vertical-align: top; }
+  td:first-child { white-space: nowrap; }
+  tr:nth-child(even) td { background: #f7fafc; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .def { margin: 5px 0; }
+  .def b { color: #2b6cb0; }
+  .tip {
+    background: #fffaf0; border-left: 3px solid #ed8936; padding: 6px 10px;
+    margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 9.5px;
+  }
+  .tip b { color: #c05621; }
+  .col { break-inside: avoid; }
+  section { break-inside: avoid; }
+  footer { margin-top: 14px; text-align: center; color: #a0aec0; font-size: 8.5px; }
+</style>
+</head>
+<body>
+
+<h1>🐳 Fiche de révision Docker</h1>
+<p class="subtitle">Notions clés · Définitions · Commandes essentielles — CDA</p>
+
+<h2>1. Concepts fondamentaux</h2>
+<div class="grid">
+  <div class="col">
+    <div class="def"><b>Docker</b> — Plateforme de <i>conteneurisation</i> : empaqueter une application et toutes ses dépendances dans une unité isolée et portable.</div>
+    <div class="def"><b>Conteneur (container)</b> — Instance <i>exécutable</i> et isolée d'une image. Léger, démarre en quelques secondes, partage le noyau de l'hôte.</div>
+    <div class="def"><b>Image</b> — Modèle <i>en lecture seule</i> (read-only) servant à créer des conteneurs. Composée de couches (layers) empilées.</div>
+    <div class="def"><b>Dockerfile</b> — Fichier texte de <i>recette</i> décrivant comment construire une image, instruction par instruction.</div>
+    <div class="def"><b>Layer (couche)</b> — Chaque instruction d'un Dockerfile crée une couche. Mises en cache pour accélérer les builds.</div>
+  </div>
+  <div class="col">
+    <div class="def"><b>Registry / Docker Hub</b> — Dépôt distant stockant les images (ex. <code>hub.docker.com</code>). On y <i>push</i> et <i>pull</i> les images.</div>
+    <div class="def"><b>Volume</b> — Stockage <i>persistant</i> géré par Docker, indépendant du cycle de vie du conteneur (données qui survivent).</div>
+    <div class="def"><b>Bind mount</b> — Montage d'un dossier de l'<i>hôte</i> dans le conteneur (ex. votre code source en dev).</div>
+    <div class="def"><b>Network</b> — Réseau virtuel permettant aux conteneurs de communiquer entre eux par leur nom.</div>
+    <div class="def"><b>Docker Compose</b> — Outil pour définir et lancer une appli <i>multi-conteneurs</i> via un fichier YAML.</div>
+  </div>
+</div>
+
+<div class="tip"><b>Conteneur vs VM :</b> une VM virtualise tout un OS (lourd, lent). Un conteneur partage le noyau de l'hôte et n'isole que l'application (léger, rapide, quelques Mo).</div>
+
+<h2>2. Cycle de vie & images</h2>
+<table>
+  <tr><th>Commande</th><th>Description</th></tr>
+  <tr><td><code>docker pull &lt;image&gt;</code></td><td>Télécharger une image depuis le registry</td></tr>
+  <tr><td><code>docker images</code></td><td>Lister les images locales</td></tr>
+  <tr><td><code>docker build -t mon-app .</code></td><td>Construire une image depuis le Dockerfile du dossier courant</td></tr>
+  <tr><td><code>docker rmi &lt;image&gt;</code></td><td>Supprimer une image</td></tr>
+  <tr><td><code>docker tag src cible:tag</code></td><td>Renommer / taguer une image</td></tr>
+  <tr><td><code>docker push user/image:tag</code></td><td>Envoyer une image vers un registry</td></tr>
+  <tr><td><code>docker history &lt;image&gt;</code></td><td>Voir les couches d'une image</td></tr>
+</table>
+
+<h2>3. Gestion des conteneurs</h2>
+<table>
+  <tr><th>Commande</th><th>Description</th></tr>
+  <tr><td><code>docker run &lt;image&gt;</code></td><td>Créer + démarrer un conteneur depuis une image</td></tr>
+  <tr><td><code>docker run -d</code></td><td><i>Detached</i> : en arrière-plan</td></tr>
+  <tr><td><code>docker run -p 8080:80</code></td><td>Publier un port (hôte:conteneur)</td></tr>
+  <tr><td><code>docker run -it &lt;img&gt; bash</code></td><td>Mode interactif + terminal (ouvrir un shell)</td></tr>
+  <tr><td><code>docker run --name web</code></td><td>Nommer le conteneur</td></tr>
+  <tr><td><code>docker ps</code></td><td>Lister les conteneurs <b>actifs</b></td></tr>
+  <tr><td><code>docker ps -a</code></td><td>Lister <b>tous</b> les conteneurs (même arrêtés)</td></tr>
+  <tr><td><code>docker stop / start / restart &lt;c&gt;</code></td><td>Arrêter / démarrer / redémarrer</td></tr>
+  <tr><td><code>docker rm &lt;conteneur&gt;</code></td><td>Supprimer un conteneur arrêté</td></tr>
+  <tr><td><code>docker logs -f &lt;conteneur&gt;</code></td><td>Afficher les logs (<code>-f</code> = en continu)</td></tr>
+  <tr><td><code>docker exec -it &lt;c&gt; bash</code></td><td>Ouvrir un shell dans un conteneur <b>déjà lancé</b></td></tr>
+  <tr><td><code>docker inspect &lt;c&gt;</code></td><td>Détails complets (JSON) du conteneur</td></tr>
+  <tr><td><code>docker stats</code></td><td>Consommation CPU / RAM en temps réel</td></tr>
+</table>
+
+<div class="tip"><b>run vs exec :</b> <code>run</code> crée un <i>nouveau</i> conteneur à partir d'une image. <code>exec</code> exécute une commande dans un conteneur qui <i>tourne déjà</i>.</div>
+
+<h2>4. Docker Compose</h2>
+<table>
+  <tr><th>Commande</th><th>Description</th></tr>
+  <tr><td><code>docker compose up</code></td><td>Construire + démarrer tous les services</td></tr>
+  <tr><td><code>docker compose up -d</code></td><td>Démarrer en arrière-plan</td></tr>
+  <tr><td><code>docker compose up --build</code></td><td>Forcer la reconstruction des images</td></tr>
+  <tr><td><code>docker compose down</code></td><td>Arrêter + supprimer conteneurs et réseaux</td></tr>
+  <tr><td><code>docker compose down -v</code></td><td>... + supprimer aussi les volumes</td></tr>
+  <tr><td><code>docker compose ps</code></td><td>État des services</td></tr>
+  <tr><td><code>docker compose logs -f &lt;service&gt;</code></td><td>Logs d'un service</td></tr>
+  <tr><td><code>docker compose exec &lt;svc&gt; bash</code></td><td>Shell dans un service</td></tr>
+  <tr><td><code>docker compose build</code></td><td>(Re)construire les images sans démarrer</td></tr>
+  <tr><td><code>docker compose restart &lt;svc&gt;</code></td><td>Redémarrer un service</td></tr>
+</table>
+
+<h3>Structure type d'un docker-compose.yaml</h3>
+<div class="cmd"><span class="cm">services:</span>
+  app:
+    <span class="cm">build:</span> ./docker/php        <span class="cm"># build depuis un Dockerfile</span>
+    <span class="cm">image:</span> php:8.4-fpm-alpine   <span class="cm"># OU image existante</span>
+    <span class="cm">ports:</span>
+      - '8080:80'              <span class="cm"># hôte:conteneur</span>
+    <span class="cm">volumes:</span>
+      - './src:/www'           <span class="cm"># bind mount (code)</span>
+    <span class="cm">environment:</span>
+      - APP_ENV=dev
+    <span class="cm">depends_on:</span>
+      - db                     <span class="cm"># ordre de démarrage</span>
+<span class="cm">volumes:</span>
+  db_data:                     <span class="cm"># volume nommé (persistant)</span></div>
+
+<h2>5. Dockerfile — instructions clés</h2>
+<table>
+  <tr><th>Instruction</th><th>Rôle</th></tr>
+  <tr><td><code>FROM</code></td><td>Image de base (obligatoire, 1re ligne)</td></tr>
+  <tr><td><code>WORKDIR</code></td><td>Définit le dossier de travail</td></tr>
+  <tr><td><code>COPY</code> / <code>ADD</code></td><td>Copier des fichiers de l'hôte vers l'image</td></tr>
+  <tr><td><code>RUN</code></td><td>Exécuter une commande au moment du <b>build</b> (ex. installer des paquets)</td></tr>
+  <tr><td><code>CMD</code></td><td>Commande par défaut au <b>démarrage</b> du conteneur (remplaçable)</td></tr>
+  <tr><td><code>ENTRYPOINT</code></td><td>Commande principale, non remplaçable facilement</td></tr>
+  <tr><td><code>EXPOSE</code></td><td>Documente le port utilisé (informatif)</td></tr>
+  <tr><td><code>ENV</code></td><td>Variable d'environnement</td></tr>
+  <tr><td><code>ARG</code></td><td>Variable disponible uniquement au build</td></tr>
+</table>
+
+<div class="tip"><b>RUN vs CMD :</b> <code>RUN</code> s'exécute pendant la <i>construction</i> de l'image. <code>CMD</code>/<code>ENTRYPOINT</code> s'exécute au <i>lancement</i> du conteneur.</div>
+
+<h2>6. Volumes, réseaux & nettoyage</h2>
+<div class="grid">
+  <div class="col">
+    <h3>Volumes & réseaux</h3>
+    <table>
+      <tr><td><code>docker volume ls</code></td><td>Lister les volumes</td></tr>
+      <tr><td><code>docker volume rm &lt;v&gt;</code></td><td>Supprimer un volume</td></tr>
+      <tr><td><code>docker network ls</code></td><td>Lister les réseaux</td></tr>
+      <tr><td><code>docker -v hôte:conteneur</code></td><td>Monter un volume</td></tr>
+    </table>
+  </div>
+  <div class="col">
+    <h3>Nettoyage (libérer de l'espace)</h3>
+    <table>
+      <tr><td><code>docker system prune</code></td><td>Supprimer tout l'inutilisé</td></tr>
+      <tr><td><code>docker system prune -a</code></td><td>... + images non utilisées</td></tr>
+      <tr><td><code>docker container prune</code></td><td>Conteneurs arrêtés</td></tr>
+      <tr><td><code>docker image prune</code></td><td>Images orphelines</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="tip"><b>Astuce dépannage :</b> si Docker monte un <i>dossier</i> à la place d'un <i>fichier</i> (erreur « not a directory »), c'est souvent qu'un chemin de bind mount n'existe pas → Docker le crée en tant que dossier. Vérifiez bien le chemin dans <code>volumes:</code>.</div>
+
+<footer>Fiche de révision Docker — générée le 16/06/2026 · Bon courage pour le CDA 🚀</footer>
+
+</body>
+</html>

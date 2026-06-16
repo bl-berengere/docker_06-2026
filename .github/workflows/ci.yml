@@ -1,0 +1,8 @@
+name: ci pipeline
+on:
+    pull_request:
+        branches:
+        - "dev"
+
+jobs:
+

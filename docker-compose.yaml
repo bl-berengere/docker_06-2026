@@ -3,13 +3,18 @@ services:
         container_name: server_cda3
         image: nginx:1.31-alpine
         working_dir: /www
+        volumes:
+            - './symfony:/www/symfony'
+            - './docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro'
+        ports:
+            - '8080:80'
 
     php_cda3:
         container_name: php_cda3
-        build: ././docker/php/
+        build: ./docker/php/
         working_dir: /www/symfony
         volumes:
-            - './symfony/et:/www/symfony'
+            - './symfony/:/www/symfony'
 
     pg_cda3:
         container_name: pg_cda3
