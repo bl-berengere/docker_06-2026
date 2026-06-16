@@ -5,4 +5,16 @@ on:
         - "dev"
 
 jobs:
+    build-docker:
+        runs-on: ubuntu-latest
+
+        setps:
+            - name: use checkout
+              uses: action/checkout@v5
+
+            - name: check version docker
+              run: |
+                docker -v
+                docker compose version
+        
 
