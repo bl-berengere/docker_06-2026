@@ -1,1 +1,26 @@
+services:
+    server_cda3:
+        container_name: server_cda3
+        image: nginx:1.31-alpine
+        working_dir: /www
+
+    php_cda3:
+        container_name: php_cda3
+        build: ././docker/php/
+        working_dir: /www/symfony
+        volumes:
+            - './symfony/et:/www/symfony'
+
+    pg_cda3:
+        container_name: pg_cda3
+        image: postgres:18.4-alpine3.23
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+        volumes:
+            - 'db_cda3:/var/lib/postgresql/18/docker'
+
+volumes :
+    db_cda3:
 
