@@ -1,0 +1,30 @@
+name: ci pipeline
+
+on:
+    pull_request:
+      branches: ["dev"]
+
+jobs:
+    build-docker:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Use checkout
+              uses: actions/checkout@v5
+
+            - name: Check version docker
+              run: |
+                docker -v
+                docker compose version
+
+            - name: Build docker services
+              run: docker compose -f docker-compose.yaml build
+
+            - name: Up && install dependencies in my php container
+              run: |
+                  docker compose run --rm php_cda3 composer install \
+                  --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+            
+            - name: stop and clean docker
+              if: always()
+              run: docker compose down
