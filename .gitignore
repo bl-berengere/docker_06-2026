@@ -1,0 +1,18 @@
+# PhpStorm / IDE
+.idea/
+*.iml
+
+# Symfony
+/symfony/.env.local
+/symfony/.env.*.local
+/symfony/var/
+/symfony/vendor/
+/symfony/public/bundles/
+/symfony/.phpunit.result.cache
+
+# Docker
+.env
+
+# Système
+.DS_Store
+Thumbs.db
